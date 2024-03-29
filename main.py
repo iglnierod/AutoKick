@@ -5,6 +5,7 @@ import time
 from discord import app_commands, Intents, Client, AppCommandOptionType
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+from keep_alive import keep_alive
 
 # LOAD DISCORD_TOKEN FROM ENV
 load_dotenv()
@@ -77,6 +78,7 @@ def log(interaction: discord.Interaction, command_name: str):
 # MAIN ENTRY POINT
 def main() -> None:
     client.run(token=TOKEN)
+    keep_alive()
 
 if __name__ == '__main__':
     main()
