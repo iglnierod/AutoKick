@@ -3,13 +3,8 @@ import os
 import threading
 import time
 from discord import app_commands, Intents, Client, AppCommandOptionType
-# from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from keep_alive import keep_alive
-
-# LOAD DISCORD_TOKEN FROM ENV
-# load_dotenv()
-# TOKEN: str = os.getenv('DISCORD_TOKEN')
 
 TOKEN: str = os.environ.get("DISCORD_TOKEN")
 
