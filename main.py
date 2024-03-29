@@ -8,8 +8,10 @@ from datetime import datetime, timedelta
 from keep_alive import keep_alive
 
 # LOAD DISCORD_TOKEN FROM ENV
-load_dotenv()
-TOKEN: str = os.getenv('DISCORD_TOKEN')
+# load_dotenv()
+# TOKEN: str = os.getenv('DISCORD_TOKEN')
+
+TOKEN: str = os.environ.get("DISCORD_TOKEN")
 
 # CLIENT SET UP
 intents: Intents = Intents.default()
