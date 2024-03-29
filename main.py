@@ -1,6 +1,8 @@
 import discord
 import os
-from discord import app_commands, Intents, Client
+import threading
+import time
+from discord import app_commands, Intents, Client, AppCommandOptionType
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
@@ -40,12 +42,32 @@ async def ping(interaction: discord.Interaction):
     log(interaction, "Ping")
     await interaction.response.send_message("pong! 🏓")
 
-@tree.command(name = "vckick", description="Auto kick from active voice chat")
-async def vckick(interaction: discord.Interaction):
-    log(interaction, "VcKick")
-    await interaction.user.move_to(None)
-    await interaction.response.send_message(f"Se te ha expulsado del canal de voz",ephemeral=True)
+@tree.command(name="vckick", description="Auto kick from active voice chat")
+@app_commands.describe(time="Optional time in minutes to perform kick (e.g., 120 for 2 hours)")
+async def vckick(interaction: discord.Interaction, time: int = None):
+    log(interaction, f"VcKick (time: {time} minutes)")
+    
+    if time is not None:
+        if time <= 0:
+            await interaction.response.send_message("The specified time should be greater than 0.", ephemeral=True)
+            return
+        
+        kick_time = datetime.now() + timedelta(minutes=time)
+        
+        threading.Thread(target=schedule_kick, args=(interaction, kick_time)).start()
+        
+        await interaction.response.send_message(f"Kick scheduled for {kick_time.strftime('%H:%M:%S')}.", ephemeral=True)
+    else:
+        await interaction.user.move_to(None)
+        await interaction.response.send_message("You have been kicked from the voice channel.", ephemeral=True)
 
+def schedule_kick(interaction: discord.Interaction, kick_time):
+    delay_seconds = (kick_time - datetime.now()).total_seconds()
+    time.sleep(delay_seconds)
+    client.loop.create_task(kick_user(interaction.user))
+
+async def kick_user(user):
+    await user.move_to(None)
 
 # LOG PRINTS
 def log(interaction: discord.Interaction, command_name: str):
